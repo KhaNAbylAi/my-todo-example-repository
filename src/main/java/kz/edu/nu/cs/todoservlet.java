@@ -21,7 +21,7 @@ public class todoservlet extends HttpServlet {
 
     public todoservlet() {
         super();
-        list.add("Welcome, start adding items!");
+        list.add("Start adding items!");
     }
 
 
@@ -34,8 +34,22 @@ public class todoservlet extends HttpServlet {
 
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	    String myText = request.getParameter("texttosend");
-	    list.add(myText);
+	    String meth = request.getParameter("method");
+	    if(meth.equals("add")) {
+	    	String text = request.getParameter("texttosend");
+	    	list.add(text);
+	    }
+	    else if (meth.equals("set")) {
+		    String elem = request.getParameter("newtext");
+		    String index = request.getParameter("index");
+		    int ind= Integer.parseInt(index);
+	    	list.set(ind, elem);
+	    }
+	    else {
+		    String index = request.getParameter("index");
+		    int ind= Integer.parseInt(index);
+	    	list.remove(ind);
+	    }
 	}
 
 }

@@ -10,11 +10,13 @@
 items = [];
 function updateList() {
 	$("#my-list").html("");
-	items.forEach(function (e) {
-		$("#my-list").append("<li>" + e + "</li>");
+	items.forEach(function (e,i) {
+		var listTemplate = _.template("<li><%= index%>:<%=name%>"+
+		   "<button type=\"submit\" value=\"delete\" id=\"delete\" onclick=\"removeListItem(<%= index %>)\">Delete</button> </li>"+
+		   "<button type=\"submit\" value=\"Edit\" onclick=\"editListItem(<%=index %>)\">Edit</button>");
+		$("#my-list").append(listTemplate({name : e, index : i}));
 	});
 }
-
 function getListItems() {
 	$.ajax({
         url : 'todo',
@@ -27,13 +29,25 @@ function getListItems() {
         }
     });
 }
-
 function sendListItem() {
     var s = $("#texttosend").val();
-    
-    $.post("todo", { texttosend: s}, function() {
+    $.post("todo", { texttosend: s, method : "add"}, function() {
     	getListItems();
     });
+}
+
+function removeListItem(ind){
+	$.post("todo", { index: ind, method: "remove"}, function() {
+    	getListItems();
+    });
+}
+function editListItem(ind){
+	var s = prompt("New value:");
+	if(s!=null){
+		$.post("todo", { index: ind, newtext: s, method: "set"}, function() {
+	    	getListItems();
+	    });
+	}
 }
 
 $(document).ready(function () {	
